@@ -1,0 +1,227 @@
+@import url('https://fonts.googleapis.com/css2?family=Nunito+Sans&display=swap');
+
+:root {
+  --clr-surface-a0: #121212;
+  --clr-surface-a10: #1e1e1e;
+  --clr-surface-a20: #2a2a2a;
+  --clr-surface-a30: #363636;
+  --clr-surface-a40: #424242;
+  --clr-surface-a50: #585858;
+
+  --clr-primary-a0: #BFED1A;
+  --clr-primary-a10: #D3FF47;
+  --clr-primary-a20: #E7FF73;
+  --clr-primary-a30: #FAFF9F;
+  --clr-primary-a40: #B3E017;
+  --clr-primary-a50: #A6D314;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body, html, #root {
+  height: 100%;
+  margin: 0;
+  background-color: var(--clr-surface-a0);
+  font-family: 'Nunito Sans', sans-serif;
+  color: var(--clr-primary-a30);
+}
+
+.container {
+  display: flex;
+  height: 100vh;
+  max-width: 100vw;
+  overflow: hidden;
+}
+
+.leftPanel {
+  flex: 1;
+  background: var(--clr-primary-a0);
+  color: var(--clr-surface-a0);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 3rem;
+  text-align: center;
+  user-select: none;
+}
+
+.leftPanel h1 {
+  font-size: 3rem;
+  font-weight: 900;
+  line-height: 1.1;
+  margin-bottom: 1rem;
+  letter-spacing: 0.06em;
+}
+
+.leftPanel p {
+  font-size: 1.3rem;
+  font-weight: 400;
+  opacity: 0.9;
+  max-width: 400px;
+}
+
+.rightPanel {
+  flex: 1;
+  background-color: var(--clr-surface-a10);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 4rem 2rem;
+}
+
+.formCard {
+  background-color: var(--clr-surface-a20);
+  padding: 3rem 3.5rem;
+  border-radius: 18px;
+  width: 100%;
+  max-width: 400px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4); /* subtle flat shadow */
+  position: relative;
+}
+
+.title {
+  font-size: 2.25rem;
+  font-weight: 800;
+  color: var(--clr-primary-a0);
+  margin-bottom: 2.5rem;
+  letter-spacing: 0.05em;
+  user-select: none;
+}
+
+.formGroup {
+  position: relative;
+  margin-bottom: 2.25rem;
+}
+
+input {
+  width: 100%;
+  background: transparent;
+  border: none;
+  border-bottom: 2px solid var(--clr-primary-a20);
+  font-size: 1.15rem;
+  color: var(--clr-primary-a50);
+  padding: 0.6rem 0 0.2rem 0;
+  font-weight: 600;
+  outline: none;
+  transition: border-color 0.3s ease;
+}
+
+input::placeholder {
+  color: transparent;
+}
+
+input:focus,
+input:not(:placeholder-shown) {
+  border-color: var(--clr-primary-a0);
+}
+
+label {
+  position: absolute;
+  left: 0;
+  top: 0.65rem;
+  font-size: 1rem;
+  color: var(--clr-primary-a30);
+  pointer-events: none;
+  transition: all 0.3s ease;
+  font-weight: 600;
+}
+
+input:focus + label,
+input:not(:placeholder-shown) + label {
+  top: -1.0rem;
+  font-size: 0.75rem;
+  color: var(--clr-primary-a0);
+  font-weight: 700;
+}
+
+.button {
+  width: 100%;
+  background-color: var(--clr-primary-a0);
+  color: var(--clr-surface-a0);
+  border: none;
+  border-radius: 24px;
+  padding: 0.9rem 0;
+  font-weight: 800;
+  font-size: 1.15rem;
+  letter-spacing: 0.07em;
+  cursor: pointer;
+  box-shadow: 0 6px 15px rgba(191, 237, 26, 0.5);
+  transition: background-color 0.3s ease, box-shadow 0.3s ease;
+  user-select: none;
+}
+
+.button:hover:not(:disabled),
+.button:focus:not(:disabled) {
+  background-color: var(--clr-primary-a10);
+  box-shadow: 0 8px 20px rgba(211, 255, 71, 0.7);
+  outline: none;
+}
+
+.button:disabled {
+  background-color: var(--clr-surface-a40);
+  color: var(--clr-surface-a50);
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+.forgotPassword {
+  margin-top: -1.75rem;
+  margin-bottom: 2.5rem;
+  text-align: right;
+  font-weight: 600;
+}
+
+.forgotPassword a {
+  color: var(--clr-primary-a30);
+  font-size: 0.9rem;
+  text-decoration: none;
+  transition: text-decoration 0.25s ease;
+  user-select: none;
+}
+
+.forgotPassword a:hover,
+.forgotPassword a:focus {
+  text-decoration: underline;
+  outline: none;
+}
+
+.signUpPrompt {
+  margin-top: 2rem;
+  font-weight: 600;
+  text-align: center;
+  font-size: 1rem;
+  user-select: none;
+}
+
+.signUpPrompt a {
+  color: var(--clr-primary-a30);
+  text-decoration: none;
+  font-weight: 800;
+  margin-left: 0.4rem;
+  transition: text-decoration 0.25s ease;
+  user-select: none;
+}
+
+.signUpPrompt a:hover,
+.signUpPrompt a:focus {
+  text-decoration: underline;
+  outline: none;
+}
+
+@media (max-width: 900px) {
+  .container {
+    flex-direction: column;
+  }
+
+  .leftPanel {
+    padding: 2rem 1.5rem;
+    font-size: 0.9rem;
+  }
+
+  .rightPanel {
+    padding: 3rem 1.5rem;
+  }
+}

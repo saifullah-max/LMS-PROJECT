@@ -1,0 +1,42 @@
+@import url("https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@400;600;700&display=swap");
+@import "tailwindcss";
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* body {
+  @apply font-sans bg-neutral text-text;
+} */
+
+
+
+:root {
+  /* Base Colors */
+  --clr-dark-a0: #000000;
+  --clr-light-a0: #ffffff;
+
+  /* Theme Primary Colors */
+  --clr-primary-a0: #cf3c43;
+  --clr-primary-a10: #d85656;
+  --clr-primary-a20: #e06d69;
+  --clr-primary-a30: #e7837d;
+  --clr-primary-a40: #ed9891;
+  --clr-primary-a50: #f3aca6;
+
+  /* Theme Surface Colors */
+  --clr-surface-a0: #121212;
+  --clr-surface-a10: #282828;
+  --clr-surface-a20: #3f3f3f;
+  --clr-surface-a30: #575757;
+  --clr-surface-a40: #717171;
+  --clr-surface-a50: #8b8b8b;
+
+  /* Theme Tonal Surface Colors */
+  --clr-surface-tonal-a0: #241817;
+  --clr-surface-tonal-a10: #392d2c;
+  --clr-surface-tonal-a20: #4f4443;
+  --clr-surface-tonal-a30: #665c5b;
+  --clr-surface-tonal-a40: #7d7574;
+  --clr-surface-tonal-a50: #968f8e;
+}
