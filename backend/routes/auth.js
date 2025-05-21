@@ -69,11 +69,14 @@ router.post(
   async (req, res) => {
     const { email, password } = req.body;
     try {
-      const user = await User.findOne({ email });
+      const user = await User.findOne({ email }).select("+password");
       if (!user) return res.status(400).json({ msg: "Invalid credentials" });
 
       const isMatch = await user.comparePassword(password);
       if (!isMatch) return res.status(400).json({ msg: "Invalid credentials" });
+
+      // strip password out before sending response
+      const { password: pw, ...userSafe } = user.toObject();
 
       const token = jwt.sign(
         { userId: user._id, role: user.role },
@@ -125,7 +128,6 @@ router.get("/me", authMiddleware, async (req, res) => {
     res.status(500).json({ msg: "Server error" });
   }
 });
-
 
 /**
  * POST /api/auth/request-reset

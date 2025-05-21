@@ -17,6 +17,24 @@ export default function TeacherAssignments() {
   const token = localStorage.getItem("token");
 
   useEffect(() => {
+    const script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src = "https://cdn.weglot.com/weglot.min.js";
+    script.onload = () => {
+      // Initialize Weglot once the script is loaded
+      Weglot.initialize({
+        api_key: "wg_96813b70717ac14018000943f675710e4", // Use your own Weglot API key
+      });
+    };
+    document.head.appendChild(script);
+
+    // Clean up script when component is unmounted
+    return () => {
+      document.head.removeChild(script);
+    };
+  }, []);
+
+  useEffect(() => {
     axios
       .get(`${API_BASE}/lectures/course/${courseId}`, {
         headers: { Authorization: `Bearer ${token}` },
@@ -69,14 +87,16 @@ export default function TeacherAssignments() {
 
   return (
     <div className="min-h-screen p-6 bg-gray-900 font-sans max-w-4xl mx-auto text-gray-100">
-      <h1 className="text-3xl font-bold mb-6 text-lime-400">Author Assignment</h1>
+      <h1 className="text-3xl font-bold mb-6 text-lime-400">
+        Author Assignment
+      </h1>
 
       <form
         onSubmit={handleCreate}
         className="space-y-6 bg-gray-800 p-6 rounded-lg shadow-lg"
       >
         <div>
-          <label className="block mb-2 font-semibold">Attach to Lecture</label>
+          <p className="block mb-2 font-semibold">Attach to Lecture</p>
           <select
             className="w-full rounded border border-gray-700 bg-gray-900 px-3 py-2 text-gray-200 focus:outline-none focus:ring-2 focus:ring-lime-400"
             value={lectureId}
@@ -93,7 +113,7 @@ export default function TeacherAssignments() {
         </div>
 
         <div>
-          <label className="block mb-2 font-semibold">Title</label>
+          <p className="block mb-2 font-semibold">Title</p>
           <input
             type="text"
             className="w-full rounded border border-gray-700 bg-gray-900 px-3 py-2 text-gray-200 focus:outline-none focus:ring-2 focus:ring-lime-400"
@@ -105,7 +125,7 @@ export default function TeacherAssignments() {
         </div>
 
         <div>
-          <label className="block mb-2 font-semibold">Description</label>
+          <p className="block mb-2 font-semibold">Description</p>
           <textarea
             className="w-full rounded border border-gray-700 bg-gray-900 px-3 py-2 text-gray-200 focus:outline-none focus:ring-2 focus:ring-lime-400"
             placeholder="Details (optional)"
@@ -116,7 +136,7 @@ export default function TeacherAssignments() {
         </div>
 
         <div>
-          <label className="block mb-2 font-semibold">Deadline</label>
+          <p className="block mb-2 font-semibold">Deadline</p>
           <input
             type="datetime-local"
             className="w-full rounded border border-gray-700 bg-gray-900 px-3 py-2 text-gray-200 focus:outline-none focus:ring-2 focus:ring-lime-400"
@@ -127,7 +147,7 @@ export default function TeacherAssignments() {
         </div>
 
         <div>
-          <label className="block mb-2 font-semibold">Upload File</label>
+          <p className="block mb-2 font-semibold">Upload File</p>
           <input
             type="file"
             accept=".pdf,.docx"

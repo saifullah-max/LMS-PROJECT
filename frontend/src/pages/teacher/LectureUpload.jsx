@@ -13,10 +13,29 @@ export default function LectureUpload() {
   const [description, setDescription] = useState("");
   const [file, setFile] = useState(null);
   const [fileType, setFileType] = useState("video");
+  const [difficulty, setDifficulty] = useState("easy"); // Default difficulty
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
+
+  useEffect(() => {
+    const script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src = "https://cdn.weglot.com/weglot.min.js";
+    script.onload = () => {
+      // Initialize Weglot once the script is loaded
+      Weglot.initialize({
+        api_key: "wg_96813b70717ac14018000943f675710e4", // Use your own Weglot API key
+      });
+    };
+    document.head.appendChild(script);
+
+    // Clean up script when component is unmounted
+    return () => {
+      document.head.removeChild(script);
+    };
+  }, []);
 
   useEffect(() => {
     (async () => {
@@ -50,6 +69,7 @@ export default function LectureUpload() {
     form.append("title", title);
     form.append("description", description);
     form.append("fileType", fileType);
+    form.append("difficulty", difficulty); // Adding the difficulty level to the form data
     form.append("file", file);
 
     try {
@@ -97,7 +117,9 @@ export default function LectureUpload() {
         ← Back to Courses
       </button>
 
-      <h1 className="mb-2 text-3xl font-semibold text-lime-400">{course?.title}</h1>
+      <h1 className="mb-2 text-3xl font-semibold text-lime-400">
+        {course?.title}
+      </h1>
       <p className="mb-6 text-gray-300">{course?.description}</p>
 
       <form
@@ -143,6 +165,19 @@ export default function LectureUpload() {
           >
             <option value="video">Video</option>
             <option value="pdf">PDF</option>
+          </select>
+        </div>
+
+        <div>
+          <label className="block mb-1 font-semibold">Difficulty Level</label>
+          <select
+            value={difficulty}
+            onChange={(e) => setDifficulty(e.target.value)}
+            className="w-full rounded border border-gray-700 bg-gray-900 px-3 py-2 text-gray-200 focus:outline-none focus:ring-2 focus:ring-lime-400"
+          >
+            <option value="easy">Easy</option>
+            <option value="medium">Medium</option>
+            <option value="hard">Hard</option>
           </select>
         </div>
 

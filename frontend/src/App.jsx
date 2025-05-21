@@ -20,12 +20,18 @@ import ForgotPassword from "./pages/auth/ForgotPassword";
 import VerifyOtp from "./pages/auth/VerifyOtp";
 import ResetPassword from "./pages/auth/ResetPassword";
 import ReportCard from "./pages/student/ReportCard";
+import ResultPage from "./pages/student/ResultPage";
 import AdminAnalytics from "./pages/admin/AdminAnalytics";
 import TeacherDashboard from "./pages/teacher/TeacherDashboard";
 import StudentAssignmentSubmit from "./pages/student/StudentAssignmentSubmit";
 import TeacherAssignments from "./pages/teacher/TeacherAssignments";
 import AssignmentSubmissions from "./pages/teacher/AssignmentSubmission";
-import AssignmentList from "./pages/teacher/AssignmentList";
+import AssignmentList from "./pages/teacher/AssignmentList";  
+import QuizHeatmap from "./components/QuizHeatmap";
+import AdminHeatmapDownload from "./components/AdminHeatmapDownload";
+import AdminDashboard from "./pages/admin/AdminDashboard";
+
+
 
 export default function App() {
   return (
@@ -74,6 +80,14 @@ export default function App() {
           element={
             <ProtectedRoute allowedRole="student">
               <ReportCard />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/result/:quizId"
+          element={
+            <ProtectedRoute allowedRole="student">
+              <ResultPage />
             </ProtectedRoute>
           }
         />
@@ -161,6 +175,24 @@ export default function App() {
             </ProtectedRoute>
           }
         />
+        <Route
+          path="/admin/heatmap"
+          element={
+            <ProtectedRoute allowedRole="admin">
+              <AdminHeatmapDownload />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/admin"
+          element={
+            <ProtectedRoute allowedRole="admin">
+              <AdminDashboard />
+            </ProtectedRoute>
+          }
+        />
+
+        
         {/* fallback: anything else goes to login */}
         <Route path="*" element={<Navigate to="/login" replace />} />
       </Routes>

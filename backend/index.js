@@ -36,7 +36,12 @@ if (process.env.NODE_ENV !== "test") {
   // app.use(mongoSanitize());
   app.use(rateLimit({ windowMs: 15 * 60 * 1000, max: 100 }));
   // app.use(expressSanitizer());
-  app.use(cors());
+  app.use(
+    cors({
+      origin: "http://localhost:5173",
+      credentials: true,
+    })
+  );
 }
 app.use(express.json());
 

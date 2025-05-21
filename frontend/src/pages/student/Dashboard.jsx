@@ -11,6 +11,25 @@ export default function StudentDashboard() {
   const BASE = import.meta.env.VITE_API_URL || "http://localhost:8001/api";
   const token = localStorage.getItem("token");
 
+
+  useEffect(() => {
+    const script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src = "https://cdn.weglot.com/weglot.min.js";
+    script.onload = () => {
+      // Initialize Weglot once the script is loaded
+      Weglot.initialize({
+        api_key: "wg_96813b70717ac14018000943f675710e4", // Use your own Weglot API key
+      });
+    };
+    document.head.appendChild(script);
+
+    // Clean up script when component is unmounted
+    return () => {
+      document.head.removeChild(script);
+    };
+  }, []);
+
   useEffect(() => {
     (async () => {
       try {

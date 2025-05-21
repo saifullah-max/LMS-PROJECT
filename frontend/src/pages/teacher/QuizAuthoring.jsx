@@ -19,6 +19,24 @@ export default function QuizAuthoring() {
   const [submitting, setSubmitting] = useState(false);
 
   useEffect(() => {
+    const script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src = "https://cdn.weglot.com/weglot.min.js";
+    script.onload = () => {
+      // Initialize Weglot once the script is loaded
+      Weglot.initialize({
+        api_key: "wg_96813b70717ac14018000943f675710e4", // Use your own Weglot API key
+      });
+    };
+    document.head.appendChild(script);
+
+    // Clean up script when component is unmounted
+    return () => {
+      document.head.removeChild(script);
+    };
+  }, []);
+
+  useEffect(() => {
     (async () => {
       try {
         const { data: c } = await axios.get(`${BASE_URL}/courses/${courseId}`, {
@@ -104,36 +122,33 @@ export default function QuizAuthoring() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-900">
-        <p className="text-gray-300">Loading…</p>
+      <div style={{ minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center", backgroundColor: "#111" }}>
+        <p style={{ color: "#ccc" }}>Loading…</p>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gray-900 p-6 max-w-5xl mx-auto font-sans text-gray-100">
-      <button
-        onClick={() => navigate(-1)}
-        className="mb-6 text-sm text-lime-400 hover:underline"
-      >
+    <div style={{ minHeight: "100vh", backgroundColor: "#111", padding: "30px", fontFamily: "sans-serif", color: "#fff", maxWidth: "900px", margin: "0 auto" }}>
+      <button onClick={() => navigate(-1)} style={{ marginBottom: "20px", fontSize: "14px", color: "#9CFF6A", cursor: "pointer", textDecoration: "underline" }}>
         ← Back to Courses
       </button>
 
-      <h1 className="text-3xl font-semibold text-lime-400 mb-6">
+      <h1 style={{ fontSize: "28px", fontWeight: "600", color: "#9CFF6A", marginBottom: "20px" }}>
         {course?.title} — Quizzes
       </h1>
 
-      {error && <p className="mb-4 text-red-500 font-semibold">{error}</p>}
+      {error && <p style={{ marginBottom: "15px", color: "red", fontWeight: "600" }}>{error}</p>}
 
-      <div className="mb-6">
-        <label className="block mb-2 font-semibold text-gray-300">
+      <div style={{ marginBottom: "20px" }}>
+        <label style={{ display: "block", marginBottom: "5px", fontWeight: "600", color: "#ccc" }}>
           Select Lecture
         </label>
         <select
           required
           value={selectedLecture}
           onChange={(e) => setSelectedLecture(e.target.value)}
-          className="w-full rounded border border-gray-700 bg-gray-900 px-3 py-2 text-gray-200 focus:outline-none focus:ring-2 focus:ring-lime-400"
+          style={{ width: "100%", padding: "10px", backgroundColor: "#222", border: "1px solid #333", color: "#ccc", borderRadius: "4px" }}
         >
           <option value="">— choose a lecture —</option>
           {lectures.map((l) => (
@@ -145,16 +160,13 @@ export default function QuizAuthoring() {
       </div>
 
       {quizzes.length > 0 && (
-        <ul className="mb-6 space-y-2">
+        <ul style={{ marginBottom: "20px" }}>
           {quizzes.map((q) => (
-            <li
-              key={q._id}
-              className="bg-gray-800 p-3 rounded flex justify-between"
-            >
+            <li key={q._id} style={{ backgroundColor: "#333", padding: "15px", borderRadius: "4px", display: "flex", justifyContent: "space-between" }}>
               <span>{q.title}</span>
               <Link
                 to={`/student/course/${courseId}/quiz/${q._id}`}
-                className="text-lime-400 hover:underline text-sm"
+                style={{ color: "#9CFF6A", textDecoration: "underline", fontSize: "14px" }}
               >
                 Preview
               </Link>
@@ -163,32 +175,26 @@ export default function QuizAuthoring() {
         </ul>
       )}
 
-      <form
-        onSubmit={handleSubmit}
-        className="space-y-6 bg-gray-800 p-6 rounded shadow-lg"
-      >
-        <h2 className="text-2xl font-semibold text-lime-400">
+      <form onSubmit={handleSubmit} style={{ backgroundColor: "#222", padding: "25px", borderRadius: "8px", boxShadow: "0 2px 10px rgba(0, 0, 0, 0.5)" }}>
+        <h2 style={{ fontSize: "24px", fontWeight: "600", color: "#9CFF6A", marginBottom: "20px" }}>
           Create New Quiz
         </h2>
 
         <div>
-          <label className="block mb-2 font-semibold text-gray-300">
+          <label style={{ display: "block", marginBottom: "10px", fontWeight: "600", color: "#ccc" }}>
             Quiz Title
           </label>
           <input
             value={quizTitle}
             onChange={(e) => setQuizTitle(e.target.value)}
             required
-            className="w-full rounded border border-gray-700 bg-gray-900 px-3 py-2 text-gray-200 focus:outline-none focus:ring-2 focus:ring-lime-400"
+            style={{ width: "100%", padding: "12px", backgroundColor: "#222", border: "1px solid #333", color: "#ccc", borderRadius: "4px", marginBottom: "20px" }}
           />
         </div>
 
         {questions.map((q, qi) => (
-          <div
-            key={`q-${qi}`}
-            className="p-4 border border-gray-700 rounded space-y-3 bg-gray-800"
-          >
-            <label className="block font-semibold text-gray-300">
+          <div key={`q-${qi}`} style={{ padding: "20px", border: "1px solid #333", borderRadius: "8px", backgroundColor: "#222", marginBottom: "15px" }}>
+            <label style={{ display: "block", fontWeight: "600", color: "#ccc" }}>
               Question #{qi + 1}
             </label>
             <input
@@ -196,40 +202,47 @@ export default function QuizAuthoring() {
               value={q.text}
               onChange={(e) => updateQuestion(qi, "text", e.target.value)}
               required
-              className="w-full rounded border border-gray-700 bg-gray-900 px-2 py-1 text-gray-200 focus:outline-none focus:ring-2 focus:ring-lime-400"
+              style={{ width: "100%", padding: "12px", backgroundColor: "#222", border: "1px solid #333", color: "#ccc", borderRadius: "4px", marginBottom: "15px" }}
             />
 
-            <div className="space-y-2">
-              <span className="block font-semibold text-gray-300">
-                Options:
-              </span>
+            <div style={{ marginBottom: "20px" }}>
+              <span style={{ display: "block", fontWeight: "600", color: "#ccc" }}>Options:</span>
               {q.options.map((opt, oi) => (
-                <div
-                  key={`q-${qi}-opt-${oi}`}
-                  className="flex flex-col space-y-2"
-                >
-                  <div className="flex items-center space-x-2">
-                    <input
-                      type="radio"
-                      name={`correct-${qi}`}
-                      checked={q.correctOption === oi}
-                      onChange={() => updateQuestion(qi, "correctOption", oi)}
-                      className="h-4 w-4 text-lime-400"
-                    />
-                    <input
-                      value={opt}
-                      onChange={(e) => updateOption(qi, oi, e.target.value)}
-                      required
-                      placeholder={`Option #${oi + 1}`}
-                      className="flex-1 rounded border border-gray-700 bg-gray-900 px-2 py-2 text-gray-200 focus:outline-none focus:ring-2 focus:ring-lime-400"
-                    />
-                  </div>
+                <div key={`q-${qi}-opt-${oi}`} style={{ display: "flex", alignItems: "center", marginBottom: "15px" }}>
+                  <input
+                    type="radio"
+                    name={`correct-${qi}`}
+                    checked={q.correctOption === oi}
+                    onChange={() => updateQuestion(qi, "correctOption", oi)}
+                    style={{ marginRight: "10px", height: "16px", width: "16px" }}
+                  />
+                  <input
+                    value={opt}
+                    onChange={(e) => updateOption(qi, oi, e.target.value)}
+                    required
+                    placeholder={`Option #${oi + 1}`}
+                    style={{
+                      flex: "1",
+                      padding: "10px",
+                      backgroundColor: "#222",
+                      border: "1px solid #333",
+                      color: "#ccc",
+                      borderRadius: "4px",
+                    }}
+                  />
                 </div>
               ))}
               <button
                 type="button"
                 onClick={() => addOption(qi)}
-                className="text-sm text-lime-400 hover:underline"
+                style={{
+                  color: "#9CFF6A",
+                  fontSize: "14px",
+                  background: "none",
+                  border: "none",
+                  cursor: "pointer",
+                  textDecoration: "underline",
+                }}
               >
                 + Add Option
               </button>
@@ -240,7 +253,14 @@ export default function QuizAuthoring() {
         <button
           type="button"
           onClick={addQuestion}
-          className="text-sm text-lime-400 hover:underline"
+          style={{
+            color: "#9CFF6A",
+            fontSize: "14px",
+            background: "none",
+            border: "none",
+            cursor: "pointer",
+            textDecoration: "underline",
+          }}
         >
           + Add Question
         </button>
@@ -248,7 +268,18 @@ export default function QuizAuthoring() {
         <button
           type="submit"
           disabled={submitting}
-          className="w-full py-2 bg-lime-400 text-gray-900 rounded font-semibold hover:bg-lime-500 disabled:opacity-50 transition"
+          style={{
+            width: "100%",
+            padding: "15px",
+            backgroundColor: "#9CFF6A",
+            color: "#222",
+            borderRadius: "4px",
+            fontWeight: "600",
+            cursor: "pointer",
+            marginTop: "20px",
+            border: "none",
+            opacity: submitting ? "0.6" : "1",
+          }}
         >
           {submitting ? "Creating…" : "Create Quiz"}
         </button>

@@ -1,3 +1,4 @@
+// src/pages/ProgressDashboard.jsx
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
@@ -14,6 +15,23 @@ export default function ProgressDashboard() {
   const token = localStorage.getItem("token");
 
   useEffect(() => {
+    const script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src = "https://cdn.weglot.com/weglot.min.js";
+    script.onload = () => {
+      // Initialize Weglot once the script is loaded
+      Weglot.initialize({
+        api_key: "wg_96813b70717ac14018000943f675710e4",
+      });
+    };
+    document.head.appendChild(script);
+
+    return () => {
+      document.head.removeChild(script);
+    };
+  }, []);
+
+  useEffect(() => {
     (async () => {
       try {
         const res = await axios.get(
@@ -28,7 +46,7 @@ export default function ProgressDashboard() {
         setLoading(false);
       }
     })();
-  }, [courseId]);
+  }, [courseId, BASE_URL, token]);
 
   if (loading) {
     return (
@@ -89,8 +107,12 @@ export default function ProgressDashboard() {
                   <div className="font-medium">{s.student.name}</div>
                   <div className="text-sm text-gray-400">{s.student.email}</div>
                 </td>
-                <td className="px-4 py-3 text-center">{Math.round(s.lecturesPct)}%</td>
-                <td className="px-4 py-3 text-center">{Math.round(s.quizzesPct)}%</td>
+                <td className="px-4 py-3 text-center">
+                  {Math.round(s.lecturesPct)}%
+                </td>
+                <td className="px-4 py-3 text-center">
+                  {Math.round(s.quizzesPct)}%
+                </td>
                 <td className="px-4 py-3 text-center">
                   {s.avgScore != null ? `${s.avgScore.toFixed(1)}%` : "—"}
                 </td>
@@ -100,7 +122,9 @@ export default function ProgressDashboard() {
                 <td className="px-4 py-3 text-center">
                   <button
                     onClick={() =>
-                      navigate(`/teacher/course/${courseId}/report-card/${s.student._id}`)
+                      navigate(
+                        `/teacher/course/${courseId}/report-card/${s.student._id}`
+                      )
                     }
                     className="text-sm font-medium text-lime-400 hover:underline"
                   >

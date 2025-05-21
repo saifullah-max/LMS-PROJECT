@@ -57,6 +57,7 @@ router.post(
       title: Joi.string().min(3).required(),
       description: Joi.string().allow("").optional().default(""),
       fileType: Joi.string().valid("video", "pdf").required(),
+      difficulty: Joi.string().valid("easy", "medium", "hard").required(), // New field validation
     }),
   }),
   authenticateJWT,
@@ -65,7 +66,7 @@ router.post(
   async (req, res) => {
     try {
       const courseId = req.params.courseId;
-      const { title, description, fileType } = req.body;
+      const { title, description, fileType, difficulty } = req.body;
 
       // 1) Verify course exists
       const course = await Course.findById(courseId);
@@ -84,6 +85,7 @@ router.post(
         filePath: relativePath,
         fileType,
         offlineUrl: publicUrl,
+        difficulty, // Store difficulty level
       });
 
       // 4) Attach lecture to course
@@ -110,9 +112,32 @@ router.post(
  * GET /api/lectures/course/:courseId
  */
 router.get("/course/:courseId", authenticateJWT, async (req, res) => {
-  const lectures = await Lecture.find({ course: req.params.courseId });
+  const lectures = await Lecture.find({ course: req.params.courseId }).select(
+    "title difficulty"
+  );
   res.json(lectures);
 });
+
+// ★ NEW: check if current student has viewed this lecture
+router.get(
+  "/:lectureId/status",
+  authenticateJWT,
+  authorizeRoles("student"),
+  async (req, res) => {
+    try {
+      const lecture = await Lecture.findById(req.params.lectureId);
+      if (!lecture) return res.status(404).json({ msg: "Lecture not found" });
+
+      const viewed = lecture.views.some((v) =>
+        v.student.equals(req.user.userId)
+      );
+      return res.json({ viewed });
+    } catch (err) {
+      console.error("Lecture status error:", err);
+      return res.status(500).json({ msg: "Server error" });
+    }
+  }
+);
 
 // GET /api/lectures/:lectureId/view
 router.get(
@@ -123,18 +148,16 @@ router.get(
     const lec = await Lecture.findById(req.params.lectureId);
     if (!lec) return res.status(404).json({ msg: "Lecture not found" });
 
-    // only push once per student
     if (!lec.views.some((v) => v.student.equals(req.user.userId))) {
       lec.views.push({ student: req.user.userId });
       await lec.save();
     }
 
-    // return the lecture record (or file URL)
     res.json(lec);
   }
 );
 
-// ★ New: record a view
+// POST /api/lectures/:lectureId/view
 router.post(
   "/:lectureId/view",
   celebrate({
@@ -144,17 +167,9 @@ router.post(
   }),
   authenticateJWT,
   async (req, res) => {
-    console.log(
-      "👉 view endpoint hit for",
-      req.params.lectureId,
-      "by",
-      req.user.userId
-    );
-    const { lectureId } = req.params;
-    const lecture = await Lecture.findById(lectureId);
+    const lecture = await Lecture.findById(req.params.lectureId);
     if (!lecture) return res.status(404).json({ msg: "Lecture not found" });
 
-    // only push once per student
     if (!lecture.views.some((v) => v.student.equals(req.user.userId))) {
       lecture.views.push({ student: req.user.userId, viewedAt: new Date() });
       await lecture.save();

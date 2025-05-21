@@ -1,3 +1,4 @@
+// server/models/Lecture.js
 const mongoose = require("mongoose");
 const { Schema } = mongoose;
 
@@ -15,6 +16,12 @@ const lectureSchema = new Schema(
     fileType: String,
     offlineUrl: String,
     views: { type: [viewSchema], default: [] }, // ← make sure this line is there!
+    difficulty: {
+      // New field for lecture difficulty
+      type: String,
+      enum: ["easy", "medium", "hard"],
+      default: "medium", // Default difficulty is "medium"
+    },
   },
   { timestamps: true }
 );

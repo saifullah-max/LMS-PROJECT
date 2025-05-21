@@ -1,3 +1,4 @@
+// src/pages/TeacherDashboard.jsx
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Select from "react-select";
@@ -24,14 +25,15 @@ export default function TeacherDashboard() {
   useEffect(() => {
     (async () => {
       try {
-        const [{ data: coursesData }, { data: studentsData }] = await Promise.all([
-          axios.get(`${BASE}/courses`, {
-            headers: { Authorization: `Bearer ${token}` },
-          }),
-          axios.get(`${BASE}/users?role=student`, {
-            headers: { Authorization: `Bearer ${token}` },
-          }),
-        ]);
+        const [{ data: coursesData }, { data: studentsData }] =
+          await Promise.all([
+            axios.get(`${BASE}/courses`, {
+              headers: { Authorization: `Bearer ${token}` },
+            }),
+            axios.get(`${BASE}/users?role=student`, {
+              headers: { Authorization: `Bearer ${token}` },
+            }),
+          ]);
         setCourses(coursesData);
         setAllStudents(studentsData);
       } catch (err) {
@@ -41,7 +43,7 @@ export default function TeacherDashboard() {
         setLoading(false);
       }
     })();
-  }, []);
+  }, [BASE, token]);
 
   const handleCreate = async (e) => {
     e.preventDefault();
@@ -90,15 +92,15 @@ export default function TeacherDashboard() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-900">
-        <p className="text-gray-300 text-lg">Loading…</p>
+      <div className="min-h-screen flex items-center justify-center bg-[var(--clr-surface-a20)]">
+        <p className="text-[var(--clr-primary-a30)] text-lg">Loading…</p>
       </div>
     );
   }
   if (error) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-900">
-        <p className="text-red-500 text-lg">{error}</p>
+      <div className="min-h-screen flex items-center justify-center bg-[var(--clr-surface-a20)]">
+        <p className="text-[var(--clr-primary-a40)] text-lg">{error}</p>
       </div>
     );
   }
@@ -109,48 +111,66 @@ export default function TeacherDashboard() {
   }));
 
   return (
-    <div className="min-h-screen bg-gray-900 p-8 font-sans text-gray-100 max-w-7xl mx-auto">
-      <h1 className="text-4xl font-bold text-lime-400 mb-8">Teacher Dashboard</h1>
+    <div className="min-h-screen bg-[var(--clr-surface-a0)] p-8 font-sans text-gray-100 max-w-7xl mx-auto">
+      <h1 className="text-4xl font-bold text-[var(--clr-primary-a0)] mb-8">
+        Teacher Dashboard
+      </h1>
 
       {/* New Course Form */}
       <form
         onSubmit={handleCreate}
-        className="mb-12 bg-gray-800 rounded-lg p-6 shadow-lg max-w-md"
+        className="mb-12 bg-[var(--clr-surface-a30)] rounded-lg p-6 shadow-lg max-w-md"
       >
-        <h2 className="text-2xl font-semibold text-lime-400 mb-4">+ New Course</h2>
+        <h2 className="text-2xl font-semibold text-[var(--clr-primary-a0)] mb-6">
+          + New Course
+        </h2>
+
         {createError && (
-          <p className="mb-4 text-red-500 font-medium">{createError}</p>
+          <p className="mb-4 text-[var(--clr-primary-a40)] font-medium">
+            {createError}
+          </p>
         )}
-        <div className="mb-4">
-          <label className="block mb-1 font-semibold" htmlFor="newTitle">
+
+        {/* Title Field with extra vertical padding */}
+        <div className="py-4 mb-4">
+          <p
+            htmlFor="newTitle"
+            className="block text-[var(--clr-primary-a0)] font-semibold mb-2"
+          >
             Title
-          </label>
+          </p>
           <input
             id="newTitle"
             value={newTitle}
             onChange={(e) => setNewTitle(e.target.value)}
             placeholder="Intro to React"
             required
-            className="w-full rounded border border-gray-700 bg-gray-900 px-3 py-2 text-gray-100 focus:outline-none focus:ring-2 focus:ring-lime-400"
+            className="block w-full rounded-lg px-4 py-2 bg-[var(--clr-surface-a20)] border border-[var(--clr-surface-a50)] focus:outline-none focus:ring-2 focus:ring-[var(--clr-primary-a0)] text-gray-100"
           />
         </div>
-        <div className="mb-6">
-          <label className="block mb-1 font-semibold" htmlFor="newDesc">
+
+        {/* Description Field with extra vertical padding */}
+        <div className="py-4 mb-6">
+          <p
+            htmlFor="newDesc"
+            className="block text-[var(--clr-primary-a0)] font-semibold mb-2"
+          >
             Description (optional)
-          </label>
+          </p>
           <textarea
             id="newDesc"
             value={newDesc}
             onChange={(e) => setNewDesc(e.target.value)}
             rows={3}
             placeholder="Course overview…"
-            className="w-full rounded border border-gray-700 bg-gray-900 px-3 py-2 text-gray-100 focus:outline-none focus:ring-2 focus:ring-lime-400"
+            className="block w-full rounded-lg px-4 py-2 bg-[var(--clr-surface-a20)] border border-[var(--clr-surface-a50)] focus:outline-none focus:ring-2 focus:ring-[var(--clr-primary-a0)] text-gray-100"
           />
         </div>
+
         <button
           type="submit"
           disabled={creating}
-          className="w-full bg-lime-400 text-gray-900 font-semibold rounded py-2 hover:bg-lime-500 disabled:opacity-50 disabled:cursor-not-allowed transition"
+          className="w-full bg-[var(--clr-primary-a0)] text-gray-900 font-semibold rounded-lg py-2 hover:bg-[var(--clr-primary-a10)] disabled:opacity-50 disabled:cursor-not-allowed transition"
         >
           {creating ? "Creating…" : "Create Course"}
         </button>
@@ -161,29 +181,37 @@ export default function TeacherDashboard() {
         {courses.map((course) => (
           <div
             key={course._id}
-            className="bg-gray-800 rounded-lg p-6 shadow hover:shadow-xl transition"
+            className="bg-[var(--clr-surface-a30)] rounded-lg p-6 shadow-lg hover:shadow-2xl transition"
           >
-            <h3 className="text-xl font-semibold text-lime-300 mb-2">
+            <h3 className="text-xl font-semibold text-[var(--clr-primary-a0)] mb-2">
               {course.title}
             </h3>
-            <p className="text-gray-400 mb-6">{course.description || "No description"}</p>
+            <p className="text-[var(--clr-surface-a40)] mb-6">
+              {course.description || "No description"}
+            </p>
 
             <div className="flex flex-wrap gap-2 mb-6">
               <button
-                onClick={() => navigate(`/teacher/course/${course._id}/lectures`)}
-                className="px-3 py-1 rounded bg-lime-400 text-gray-900 font-medium hover:bg-lime-500 transition"
+                onClick={() =>
+                  navigate(`/teacher/course/${course._id}/lectures`)
+                }
+                className="px-4 py-2 rounded bg-[var(--clr-primary-a0)] text-gray-900 hover:bg-[var(--clr-primary-a10)] transition"
               >
                 Upload Lectures
               </button>
               <button
-                onClick={() => navigate(`/teacher/course/${course._id}/quizzes`)}
-                className="px-3 py-1 rounded bg-lime-400 text-gray-900 font-medium hover:bg-lime-500 transition"
+                onClick={() =>
+                  navigate(`/teacher/course/${course._id}/quizzes`)
+                }
+                className="px-4 py-2 rounded bg-[var(--clr-primary-a0)] text-gray-900 hover:bg-[var(--clr-primary-a10)] transition"
               >
                 Author Quizzes
               </button>
               <button
-                onClick={() => navigate(`/teacher/course/${course._id}/assignments`)}
-                className="px-3 py-1 rounded bg-lime-400 text-gray-900 font-medium hover:bg-lime-500 transition"
+                onClick={() =>
+                  navigate(`/teacher/course/${course._id}/assignments`)
+                }
+                className="px-4 py-2 rounded bg-[var(--clr-primary-a0)] text-gray-900 hover:bg-[var(--clr-primary-a10)] transition"
               >
                 Author Assignments
               </button>
@@ -191,22 +219,24 @@ export default function TeacherDashboard() {
                 onClick={() =>
                   navigate(`/teacher/course/${course._id}/assignments/grade`)
                 }
-                className="px-3 py-1 rounded bg-lime-400 text-gray-900 font-medium hover:bg-lime-500 transition"
+                className="px-4 py-2 rounded bg-[var(--clr-primary-a0)] text-gray-900 hover:bg-[var(--clr-primary-a10)] transition"
               >
                 Grade Assignments
               </button>
               <button
-                onClick={() => navigate(`/teacher/course/${course._id}/progress`)}
-                className="px-3 py-1 rounded bg-lime-400 text-gray-900 font-medium hover:bg-lime-500 transition"
+                onClick={() =>
+                  navigate(`/teacher/course/${course._id}/progress`)
+                }
+                className="px-4 py-2 rounded bg-[var(--clr-primary-a0)] text-gray-900 hover:bg-[var(--clr-primary-a10)] transition"
               >
                 View Progress
               </button>
             </div>
 
             <div>
-              <label className="block mb-2 font-semibold text-gray-300">
+              <p className="block mb-2 font-semibold text-[var(--clr-surface-a50)]">
                 Assign Students
-              </label>
+              </p>
               <Select
                 isMulti
                 options={studentOptions}
@@ -221,14 +251,15 @@ export default function TeacherDashboard() {
                 }
                 placeholder="Search & select…"
                 className="text-gray-900"
-                classNamePrefix="select"
+                classNamePrefix="react-select"
               />
               <button
                 onClick={() => handleAssign(course._id)}
                 disabled={
-                  assigningMap[course._id] || !(selectedMap[course._id]?.length > 0)
+                  assigningMap[course._id] ||
+                  !(selectedMap[course._id]?.length > 0)
                 }
-                className="mt-3 w-full bg-lime-400 text-gray-900 font-semibold rounded py-2 hover:bg-lime-500 disabled:opacity-50 disabled:cursor-not-allowed transition"
+                className="mt-3 w-full bg-[var(--clr-primary-a0)] text-gray-900 font-semibold rounded-lg py-2 hover:bg-[var(--clr-primary-a10)] disabled:opacity-50 transition"
               >
                 {assigningMap[course._id] ? "Assigning…" : "Assign Selected"}
               </button>

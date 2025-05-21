@@ -151,6 +151,32 @@ router.get(
   }
 );
 
+router.get('/course/:courseId/progress', authenticateJWT, async (req, res) => {
+  try {
+    const courseId = req.params.courseId;
+    const studentId = req.user.userId;
+
+    // Check if student has viewed all lectures in the course
+    const lectures = await Lecture.find({ course: courseId });
+    const viewedLectures = lectures.filter((lecture) =>
+      lecture.views.some((view) => view.student.toString() === studentId)
+    );
+    const lecturesPct = (viewedLectures.length / lectures.length) * 100;
+
+    // Check if final exam exists
+    const finalExam = await Quiz.findOne({ course: courseId, isFinal: true });
+
+    res.json({
+      lecturesPct, // Percentage of lectures completed
+      finalExamAvailable: lecturesPct === 100 && finalExam !== null, // Final exam available if all lectures are viewed
+    });
+  } catch (err) {
+    console.error("Error fetching progress:", err);
+    res.status(500).json({ msg: "Server error" });
+  }
+});
+
+
 // ─── REMOVE THIS BLOCK ──────────────────────────────────────────────────────────
 // // Enroll student in a course (student self-enroll)
 // router.post(

@@ -3,55 +3,64 @@ import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
 
 export default function ReportCard() {
-  const { studentId, courseId } = useParams();
+  const { courseId } = useParams();
   const navigate = useNavigate();
   const [report, setReport] = useState("");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
-  const BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:8001/api";
+
+  const BASE = import.meta.env.VITE_API_URL || "http://localhost:8001/api";
   const token = localStorage.getItem("token");
 
   useEffect(() => {
     (async () => {
       try {
-        const res = await axios.get(`${BASE_URL}/ai/report-card/${studentId}`, {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-        setReport(res.data.reportCard);
+        // 🔄 hit our new combined endpoint
+        const { data } = await axios.get(
+          `${BASE}/ai/course-report/${courseId}`,
+          {
+            headers: { Authorization: `Bearer ${token}` },
+          }
+        );
+        setReport(data.report);
       } catch (err) {
-        console.error(err);
-        setError("Failed to load report card.");
+        console.error("Failed to load report:", err);
+        setError("Could not load report.");
       } finally {
         setLoading(false);
       }
     })();
-  }, [studentId]);
+  }, [BASE, courseId, token]);
 
-  if (loading) {
+  if (loading)
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-900">
-        <p className="text-gray-300 text-lg">Loading report card…</p>
+        <p className="text-gray-300">Loading report…</p>
       </div>
     );
-  }
-  if (error) {
+  if (error)
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-900 px-4">
-        <p className="text-red-500 text-center max-w-md">{error}</p>
+      <div className="min-h-screen flex items-center justify-center bg-gray-900">
+        <p className="text-red-500">{error}</p>
       </div>
     );
-  }
 
   return (
-    <div className="min-h-screen bg-gray-100 p-6 max-w-4xl mx-auto font-sans rounded shadow">
+    <div className="min-h-screen bg-gray-900 p-6 max-w-3xl mx-auto text-gray-100 font-sans">
       <button
         onClick={() => navigate(-1)}
-        className="mb-6 text-lime-600 font-semibold hover:underline"
+        className="mb-6 text-sm font-medium text-lime-400 hover:underline"
       >
         ← Back
       </button>
-      <h1 className="text-3xl font-bold mb-6">Report Card</h1>
-      <pre className="whitespace-pre-wrap text-gray-800">{report}</pre>
+
+      <h1 className="text-3xl font-semibold text-lime-400 mb-4">
+        AI Course Performance Report
+      </h1>
+
+      <div className="bg-gray-800 p-6 rounded-lg whitespace-pre-wrap">
+        {report}
+      </div>
     </div>
   );
 }

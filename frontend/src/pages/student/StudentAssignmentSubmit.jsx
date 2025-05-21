@@ -15,17 +15,21 @@ export default function StudentAssignmentSubmit() {
   const [error, setError] = useState("");
   const [submission, setSubmission] = useState(null);
 
+  // Fetch assignment details
   useEffect(() => {
     (async () => {
       try {
-        const { data: a } = await axios.get(`${BASE}/assignments/${assignmentId}`, {
-          headers: { Authorization: `Bearer ${token}` },
-        });
+        const { data: a } = await axios.get(
+          `${BASE}/assignments/${assignmentId}`,
+          {
+            headers: { Authorization: `Bearer ${token}` },
+          }
+        );
         setAssignment(a);
 
         const meId = JSON.parse(atob(token.split(".")[1])).userId;
         const mySub = a.submissions.find((s) => s.student._id === meId);
-        if (mySub) setSubmission(mySub);
+        if (mySub) setSubmission(mySub); // If user has already submitted, populate submission
       } catch (err) {
         console.error("Could not load assignment:", err);
         setError("Could not load assignment.");
@@ -35,6 +39,7 @@ export default function StudentAssignmentSubmit() {
     })();
   }, [BASE, assignmentId, token]);
 
+  // Handle file submission
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!file) {
@@ -65,6 +70,7 @@ export default function StudentAssignmentSubmit() {
     }
   };
 
+  // Handle deleting the submission
   const handleDelete = async () => {
     if (!window.confirm("Delete your submission?")) return;
     try {
@@ -113,7 +119,9 @@ export default function StudentAssignmentSubmit() {
       </p>
 
       {pastDeadline && !submission && (
-        <p className="text-red-600 mb-6 font-semibold">Deadline has passed – you cannot submit.</p>
+        <p className="text-red-600 mb-6 font-semibold">
+          Deadline has passed – you cannot submit.
+        </p>
       )}
 
       {submission ? (
